@@ -17,6 +17,7 @@ const App = () => {
 
   const onSubmitForm = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     try {
         const body = { description, isdone: false };
         const response = fetch("http://localhost:5000/todos",{
@@ -24,10 +25,10 @@ const App = () => {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(body)
         });
-
-        console.log(response);
+        //console.log(response);
         setDescription("");
         getAll();
+
     } catch (error) {
         let message;
         if (error instanceof Error) message = error.message;

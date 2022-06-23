@@ -1,19 +1,26 @@
 const express = require("express");
 const cors = require("cors");
 const pool = require("./db");
+const path = require("path");
 const app = express();
+const PORT = process.env.PORT || 5000;
 
 
 /* middleware */
 app.use(cors());
 app.use(express.json());
 
+app.use(express.static(path.join(__dirname, "client/dist")))
+
+if (process.env.NODE_ENV === "production") {
+    app.use(express.static(path.join(__dirname, "client/dist")))
+}
+
+console.log(__dirname);
 
 /* routes */
 
 app.get("/todos", async (req, res) => {
-    const date = new Date(Date.now()).toISOString();
-    console.log(date);
     try {
         const allTodos = await pool.query("SELECT * FROM todo");
         res.json(allTodos.rows);
@@ -53,7 +60,6 @@ app.post("/todos", async (req, res) => {
 app.put("/todos/:id", async (req, res) => {
     const { id } = req.params;
     const { description, isdone } = req.body;
-    console.log("isdon: " + isdone);
     try {
         const todo = await pool.query(
             "UPDATE todo SET description=($1), isDone=($2) WHERE id=($3)",
@@ -78,6 +84,6 @@ app.delete("/todos/:id", async (req, res) => {
     }
 })
 
-app.listen(5000, (req, res) => {
-    console.log("listen...");
+app.listen(PORT, (req, res) => {
+    console.log(`listening to port ${PORT}...`);
 })
